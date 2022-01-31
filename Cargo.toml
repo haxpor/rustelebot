@@ -2,6 +2,13 @@
 name = "rustelebot"
 version = "0.1.0"
 edition = "2021"
+authors = ["Wasin Thonkaew <wasin@wasin.io>"]
+description = "A telegram bot API which help you send message, or utilize telegram bot API integrateable with your application"
+repository = "https://github.com/haxpor/rustelebot"
+license = "MIT"
+keywords = ["telegram", "bot", "api"]
+categories = ["api-bindings"]
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
