@@ -1,5 +1,3 @@
-use isahc::prelude::*;
-
 /// Requests will be sent according to bot instance.
 /// So users can use this library interacting with multiple bot APIs by having
 /// multiple of `BotInstance`.

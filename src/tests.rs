@@ -63,7 +63,7 @@ mod test {
     fn test_send_message_simple() {
         let instance = get_instance();
 
-        if let Err(e) = send_message(&instance, "test") {
+        if let Err(_) = send_message(&instance, "test") {
             assert!(false);
         }
     }
@@ -76,16 +76,16 @@ mod test {
     fn test_send_messages_sync() {
         let instance = get_instance();
 
-        if let Err(e) = send_message(&instance, "[Rustelebot] msg1") {
+        if let Err(_) = send_message(&instance, "[Rustelebot] msg1") {
             assert!(false)
         }
-        if let Err(e) = send_message(&instance, "[Rustelebot] msg2") {
+        if let Err(_) = send_message(&instance, "[Rustelebot] msg2") {
             assert!(false)
         }
-        if let Err(e) = send_message(&instance, "[Rustelebot] msg3") {
+        if let Err(_) = send_message(&instance, "[Rustelebot] msg3") {
             assert!(false)
         }
-        if let Err(e) = send_message(&instance, "[Rustelebot] msg4") {
+        if let Err(_) = send_message(&instance, "[Rustelebot] msg4") {
             assert!(false)
         }
     }
