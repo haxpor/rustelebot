@@ -32,10 +32,10 @@ fn main() {
 	let instance = rustelebot::create_instance("123456:123456", "-1000000");
 
 	async fn async_fn(instance: &BotInstance) {
-		let f1 = send_message_async(&instance, "Msg1");
-		let f2 = send_message_async(&instance, "Msg2");
-		let f3 = send_message_async(&instance, "Msg3");
-		let f4 = send_message_async(&instance, "Msg4");
+		let f1 = rustelebot::send_message_async(&instance, "Msg1");
+		let f2 = rustelebot::send_message_async(&instance, "Msg2");
+		let f3 = rustelebot::send_message_async(&instance, "Msg3");
+		let f4 = rustelebot::send_message_async(&instance, "Msg4");
 
 		// wait for all futures
 		// this doesn't not guarantee order
