@@ -8,8 +8,44 @@ or telegram channel group provided that we know `chat_id`.
 
 # APIs
 
-* `pub fn send_message(instance: &BotInstance, msg: &str) -> Result<(), ErrorResult>`
-* `pub async fn send_message_async(instance: &BotInstance, msg: &str) -> Result<(), ErrorResult>`
+* `create_instance` - create a bot instance consistsing of Telegram's bot token, and target `chat_id`
+* `send_message` - call Telegram bot's API `sendMessage` to send message synchronously
+* `send_message_async` - call Telegram bot's API `sendMessage` to send message asynchronously
+
+# Example
+
+## Send Synchronously
+
+```rust
+fn main() {
+	let instance = rustelebot::create_instance("123456:123456", "-1000000");
+	if let Err(_) = rustelebot::send_message(&instance, "Hello world") {
+		// error handling here...
+	}
+}
+```
+
+# Send Asynchronously
+
+```rust
+fn main() {
+	let instance = rustelebot::create_instance("123456:123456", "-1000000");
+
+	async fn async_fn(instance: &BotInstance) {
+		let f1 = send_message_async(&instance, "Msg1");
+		let f2 = send_message_async(&instance, "Msg2");
+		let f3 = send_message_async(&instance, "Msg3");
+		let f4 = send_message_async(&instance, "Msg4");
+
+		// wait for all futures
+		// this doesn't not guarantee order
+		futures::join!(f1, f2, f3, f4);
+	}
+
+	// block on the current thread for the whole async (futures) to complete
+	futures::executor::block_on(async_fn(&instance));
+}
+```
 
 # Tests
 
@@ -23,7 +59,7 @@ then execute
 `cargo test`
 
 some tests will send a single, or multiple messages to specified chat id on behalf
-of such telegram bot.
+of such telegram bot. Please take a look at `src/tests.rs`.
 
 # License
 MIT, Wasin Thonkaew
