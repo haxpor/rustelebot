@@ -1,6 +1,6 @@
 [package]
 name = "rustelebot"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Wasin Thonkaew <wasin@wasin.io>"]
 description = "A telegram bot API which help you send message, or utilize telegram bot API integrateable with your application"
