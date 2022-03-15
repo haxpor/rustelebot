@@ -94,13 +94,55 @@ r#"\[Rustelebot\] *async msg 1*
 You can visit my [website](https://wasin.io)\.  
 Woot\!"#,
                                         Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::MarkdownV2) }));
-            
+
             let f2 = send_message_async(&instance, 
 r#"\[Rustelebot\] *async msg 2*  
 `Tap to copy this text`\.  
 You can visit my [website](https://wasin.io)\.  
 Woot\!"#,
                                         Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::MarkdownV2) }));
+
+            let _ = futures::join!(f1, f2);
+        }
+
+        futures::executor::block_on(intern_fn(&instance));
+    }
+
+    /// Send HTML style message
+    #[test]
+    fn test_send_html_style_message() {
+        let instance = get_instance();
+
+        match send_message(&instance,
+r#"[Rustelebot] <u>HTML style</u>
+<code>Tap to copy this text</code>.
+You can visit my <a href="https://wasin.io">website</a>.
+Woot!"#,
+                            Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::HTML) })) {
+            Err(e) => panic!("error sending html style message; err={}", e),
+            _ => (),
+        }
+    }
+
+    /// Send HTML style message (async)
+    #[test]
+    fn test_send_html_style_message_async() {
+        let instance = get_instance();
+
+        async fn intern_fn(instance: &BotInstance) {
+            let f1 = send_message_async(&instance,
+r#"[Rustelebot] <u>HTML style</u> - <b>async msg 1</b>
+<code>Tap to copy this text</code>.
+You can visit my <a href="https://wasin.io">website</a>.
+Woot!"#,
+                                        Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::HTML) }));
+
+            let f2 = send_message_async(&instance,
+r#"[Rustelebot] <u>HTML style</u> - <b>async msg 2</b>
+<code>Tap to copy this text</code>.
+You can visit my <a href="https://wasin.io">website</a>.
+Woot!"#,
+                                        Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::HTML) }));
 
             let _ = futures::join!(f1, f2);
         }
