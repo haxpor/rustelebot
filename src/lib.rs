@@ -28,28 +28,60 @@ pub fn create_instance(bot_token: &str, chat_id: &str) -> BotInstance {
 /// * `instance` - `BotInstance` to send message to telegram's chat
 /// * `msg` - message to send
 pub fn send_message(instance: &BotInstance, msg: &str) -> Result<(), ErrorResult> {
-    let raw_url_str = format!("https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={telegram_chat_id}&text={msg}", bot_token=instance.bot_token, telegram_chat_id=instance.chat_id, msg=msg);
+    let raw_url_str = format!("https://api.telegram.org/bot{}/sendMessage", instance.bot_token);
+    let url = match Url::parse(&raw_url_str) {
+		Ok(res) => res,
+        Err(e) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &format!("Error parsing Url; err={}", e)),
+	};
 
-    if let  Ok(url) = Url::parse(&raw_url_str) {
-        match isahc::get(url.as_str()) {
-            Ok(mut res) => {
-                if res.status() == 200 {
-                    // return success result
-                    return Ok(());  // just return as unit
-                }
-                else {
-                    // return error result
-                    match res.json::<TelegramErrorResult>() {
-                        Ok(json) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &json.description.to_owned()),
-                        Err(_) => return utils::create_error_result_str(StatusCode::ErrorInternalError, "Error converting telegram error response to json")
-                    }
-                }
-            },
-            Err(e) => return utils::create_error_result_kind(StatusCode::ErrorInternalError, e.kind().clone()),
-        }
+	// declare a request struct used only in this function scope
+    // NOTE: serde::Serialize can work with &str
+    #[derive(Debug, serde::Serialize)]
+    struct RequestObj<'a> {
+        chat_id: &'a str,
+        text: &'a str,
     }
 
-    utils::create_error_result_str(StatusCode::ErrorInternalError, "Error parsing internal telegram url")
+    // create a request object which contains parameters needed for the API
+    let request_json_obj = RequestObj {
+        chat_id: &instance.chat_id,
+        text: msg,
+    };
+
+    // serialize as json byte vector
+    let request_json_obj_body = match serde_json::to_vec(&request_json_obj) {
+        Ok(res) => res,
+        Err(e) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &format!("Error serializing HTTP request object into JSON byte vector; err={}", e)),
+    };
+
+    // telegram supports both GET, and POST with various content-type
+    // 'application/json' is one of them that telegram supports
+    let request = match isahc::Request::builder()
+        .method("POST")
+        .uri(url.as_str())
+        .header("content-type", "application/json")
+        .version_negotiation(isahc::config::VersionNegotiation::http2())
+        .body(request_json_obj_body) {
+            Ok(res) => res,
+            Err(e) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &format!("Error building HTTP request; err={}", e)),
+    };
+
+	match isahc::send(request) {
+		Ok(mut res) => {
+			if res.status() == 200 {
+				// return success result
+				return Ok(());  // just return as unit
+			}
+			else {
+				// return error result
+				match res.json::<TelegramErrorResult>() {
+					Ok(json) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &json.description.to_owned()),
+					Err(_) => return utils::create_error_result_str(StatusCode::ErrorInternalError, "Error converting telegram error response to json")
+				}
+			}
+		},
+		Err(e) => return utils::create_error_result_kind(StatusCode::ErrorInternalError, e.kind().clone()),
+	}
 }
 
 /// Send message asynchronously.
@@ -60,26 +92,58 @@ pub fn send_message(instance: &BotInstance, msg: &str) -> Result<(), ErrorResult
 /// * `instance` - `BotInstance` to send message to telegram's chat
 /// * `msg` - message to send
 pub async fn send_message_async(instance: &BotInstance, msg: &str) -> Result<(), ErrorResult> {
-    let raw_url_str = format!("https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={telegram_chat_id}&text={msg}", bot_token=instance.bot_token, telegram_chat_id=instance.chat_id, msg=msg);
+    let raw_url_str = format!("https://api.telegram.org/bot{}/sendMessage", instance.bot_token);
+    let url = match Url::parse(&raw_url_str) {
+		Ok(res) => res,
+        Err(e) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &format!("Error parsing Url; err={}", e)),
+	};
 
-    if let  Ok(url) = Url::parse(&raw_url_str) {
-        match isahc::get_async(url.as_str()).await {
-            Ok(mut res) => {
-                if res.status() == 200 {
-                    // return success result
-                    return Ok(());  // just return as unit
-                }
-                else {
-                    // return error result
-                    match res.json::<TelegramErrorResult>().await {
-                        Ok(json) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &json.description.to_owned()),
-                        Err(_) => return utils::create_error_result_str(StatusCode::ErrorInternalError, "Error converting telegram error response to json")
-                    }
-                }
-            },
-            Err(e) => return utils::create_error_result_kind(StatusCode::ErrorInternalError, e.kind().clone()),
-        }
+	// declare a request struct used only in this function scope
+    // NOTE: serde::Serialize can work with &str
+    #[derive(Debug, serde::Serialize)]
+    struct RequestObj<'a> {
+        chat_id: &'a str,
+        text: &'a str,
     }
 
-    utils::create_error_result_str(StatusCode::ErrorInternalError, "Error parsing internal telegram url")
+    // create a request object which contains parameters needed for the API
+    let request_json_obj = RequestObj {
+        chat_id: &instance.chat_id,
+        text: msg,
+    };
+
+    // serialize as json byte vector
+    let request_json_obj_body = match serde_json::to_vec(&request_json_obj) {
+        Ok(res) => res,
+        Err(e) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &format!("Error serializing HTTP request object into JSON byte vector; err={}", e)),
+    };
+
+    // telegram supports both GET, and POST with various content-type
+    // 'application/json' is one of them that telegram supports
+    let request = match isahc::Request::builder()
+        .method("POST")
+        .uri(url.as_str())
+        .header("content-type", "application/json")
+        .version_negotiation(isahc::config::VersionNegotiation::http2())
+        .body(request_json_obj_body) {
+            Ok(res) => res,
+            Err(e) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &format!("Error building HTTP request; err={}", e)),
+    };
+
+    match isahc::send_async(request).await {
+        Ok(mut res) => {
+            if res.status() == 200 {
+                // return success result
+                return Ok(());  // just return as unit
+            }
+            else {
+                // return error result
+                match res.json::<TelegramErrorResult>().await {
+                    Ok(json) => return utils::create_error_result_str(StatusCode::ErrorInternalError, &json.description.to_owned()),
+                    Err(_) => return utils::create_error_result_str(StatusCode::ErrorInternalError, "Error converting telegram error response to json")
+                }
+            }
+        },
+        Err(e) => return utils::create_error_result_kind(StatusCode::ErrorInternalError, e.kind().clone()),
+    }
 }
