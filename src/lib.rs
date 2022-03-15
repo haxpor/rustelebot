@@ -8,6 +8,7 @@ pub mod tests;
 pub mod types;
 pub mod utils;
 pub mod isahc_utils;
+mod impls;
 
 /// Create an instance to interact with APIs.
 /// Return `BotInstance`.
