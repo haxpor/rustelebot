@@ -105,7 +105,13 @@ You can visit my [website](https://wasin.io)\.
 Woot\!"#,
                                         Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::MarkdownV2) }));
 
-            let _ = futures::join!(f1, f2);
+            let (res1, res2) = futures::join!(f1, f2);
+            if res1.is_err() {
+                panic!("f1 has error");
+            }
+            if res2.is_err() {
+                panic!("f2 has error");
+            }
         }
 
         futures::executor::block_on(intern_fn(&instance));
@@ -147,7 +153,13 @@ You can visit my <a href="https://wasin.io">website</a>.
 Woot!"#,
                                         Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::HTML) }));
 
-            let _ = futures::join!(f1, f2);
+            let (res1, res2) = futures::join!(f1, f2);
+            if res1.is_err() {
+                panic!("f1 has error");
+            }
+            if res2.is_err() {
+                panic!("f2 has error");
+            }
         }
 
         futures::executor::block_on(intern_fn(&instance));
@@ -188,7 +200,19 @@ Woot!"#,
 
             // wait for all futures
             // this doesn't not guarantee order
-            let _ = futures::join!(f1, f2, f3, f4);
+            let (res1, res2, res3, res4) = futures::join!(f1, f2, f3, f4);
+            if res1.is_err() {
+                panic!("f1 has error");
+            }
+            if res2.is_err() {
+                panic!("f2 has error");
+            }
+            if res3.is_err() {
+                panic!("f3 has error");
+            }
+            if res4.is_err() {
+                panic!("f4 has error");
+            }
         }
 
         // block on the current thread for the whole async (futures) completes
