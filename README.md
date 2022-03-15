@@ -32,7 +32,7 @@ fn main() {
 Send message in `MarkdownV2`
 
 ```rust
-use rustelebot::{SendMessageOption, SendMessageParseMode};
+use rustelebot::types::{SendMessageOption, SendMessageParseMode};
 
 fn main() {
 	let instance = rustelebot::create_instance("123456:123456", "-1000000");
@@ -51,7 +51,7 @@ Visit my [website](https://wasin.io)"#, Some(option)) {
 Send messsage in `HTML`
 
 ```rust
-use rustelebot::{SendMessageOption, SendMessageParseMode};
+use rustelebot::types::{SendMessageOption, SendMessageParseMode};
 
 fn main() {
 	let instance = rustelebot::create_instance("123456:123456", "-1000000");
