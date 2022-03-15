@@ -36,3 +36,18 @@ pub enum StatusCode {
     /// value will be used.
     ErrorInternalError,
 }
+
+/// Parse mode for `sendMessage` API
+pub enum SendMessageParseMode {
+    /// MarkdownV2 style
+    MarkdownV2,
+
+    /// HTML style
+    HTML,
+}
+
+/// Options which can be used with `sendMessage` API
+pub struct SendMessageOption {
+    /// Parse mode
+    pub parse_mode: Option<SendMessageParseMode>,
+}

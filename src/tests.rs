@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod test {
     use crate::*;   // to import lib.rs
+    use crate::types::{SendMessageOption, SendMessageParseMode};
     use std::env;
 
     /// Reading bot token, and chat id for inteacting with telegram bot.
@@ -62,9 +63,49 @@ mod test {
     fn test_send_message_simple() {
         let instance = get_instance();
 
-        if let Err(_) = send_message(&instance, "test") {
+        if let Err(_) = send_message(&instance, "test", None) {
             assert!(false);
         }
+    }
+
+    #[test]
+    fn test_send_markdown_style_message() {
+        let instance = get_instance();
+
+        // NOTE: 2 spaces at the end of the line in Markdown to include a newline
+        match send_message(&instance,
+r#"\[Rustelebot\] `Tap to copy this text`\.  
+You can visit my [website](https://wasin.io)\.  
+Woot\!"#,
+                            Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::MarkdownV2) })) {
+            Err(e) => panic!("error sending markdown style message; err={}", e),
+            _ => (),
+        }
+    }
+
+    #[test]
+    fn test_send_makdown_style_message_async() {
+        let instance = get_instance();
+
+        async fn intern_fn(instance: &BotInstance) {
+            let f1 = send_message_async(&instance, 
+r#"\[Rustelebot\] *async msg 1*  
+`Tap to copy this text`\.  
+You can visit my [website](https://wasin.io)\.  
+Woot\!"#,
+                                        Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::MarkdownV2) }));
+            
+            let f2 = send_message_async(&instance, 
+r#"\[Rustelebot\] *async msg 2*  
+`Tap to copy this text`\.  
+You can visit my [website](https://wasin.io)\.  
+Woot\!"#,
+                                        Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::MarkdownV2) }));
+
+            let _ = futures::join!(f1, f2);
+        }
+
+        futures::executor::block_on(intern_fn(&instance));
     }
 
     /// Each messasge will be sent one by one in order.
@@ -75,16 +116,16 @@ mod test {
     fn test_send_messages_sync() {
         let instance = get_instance();
 
-        if let Err(_) = send_message(&instance, "[Rustelebot] msg1") {
+        if let Err(_) = send_message(&instance, "[Rustelebot] msg1", None) {
             assert!(false)
         }
-        if let Err(_) = send_message(&instance, "[Rustelebot] msg2") {
+        if let Err(_) = send_message(&instance, "[Rustelebot] msg2", None) {
             assert!(false)
         }
-        if let Err(_) = send_message(&instance, "[Rustelebot] msg3") {
+        if let Err(_) = send_message(&instance, "[Rustelebot] msg3", None) {
             assert!(false)
         }
-        if let Err(_) = send_message(&instance, "[Rustelebot] msg4") {
+        if let Err(_) = send_message(&instance, "[Rustelebot] msg4", None) {
             assert!(false)
         }
     }
@@ -95,10 +136,10 @@ mod test {
         let instance = get_instance();
 
         async fn async_fn(instance: &BotInstance) {
-            let f1 = send_message_async(&instance, "[Rustelebot] msg1-async");
-            let f2 = send_message_async(&instance, "[Rustelebot] msg2-async");
-            let f3 = send_message_async(&instance, "[Rustelebot] msg3-async");
-            let f4 = send_message_async(&instance, "[Rustelebot] msg4-async");
+            let f1 = send_message_async(&instance, "[Rustelebot] msg1-async", None);
+            let f2 = send_message_async(&instance, "[Rustelebot] msg2-async", None);
+            let f3 = send_message_async(&instance, "[Rustelebot] msg3-async", None);
+            let f4 = send_message_async(&instance, "[Rustelebot] msg4-async", None);
 
             // wait for all futures
             // this doesn't not guarantee order
