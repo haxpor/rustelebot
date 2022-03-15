@@ -88,6 +88,9 @@ fn main() {
 }
 ```
 
+Similarly we can provide `SendMessageOption` as seen in synchronized way. Functionalities
+are equal.
+
 # Tests
 
 You can test by define the following two environment variables
