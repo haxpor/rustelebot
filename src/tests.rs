@@ -74,7 +74,8 @@ mod test {
 
         // NOTE: 2 spaces at the end of the line in Markdown to include a newline
         match send_message(&instance,
-r#"\[Rustelebot\] `Tap to copy this text`\.  
+r#"\[Rustelebot\] __MarkdownV2__  
+`Tap to copy this text`\.  
 You can visit my [website](https://wasin.io)\.  
 Woot\!"#,
                             Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::MarkdownV2) })) {
@@ -84,19 +85,21 @@ Woot\!"#,
     }
 
     #[test]
-    fn test_send_makdown_style_message_async() {
+    fn test_send_markdown_style_message_async() {
         let instance = get_instance();
 
         async fn intern_fn(instance: &BotInstance) {
-            let f1 = send_message_async(&instance, 
-r#"\[Rustelebot\] *async msg 1*  
+            let f1 = send_message_async(&instance,
+r#"\[Rustelebot\] __MarkdownV2__  
+*async msg 1*  
 `Tap to copy this text`\.  
 You can visit my [website](https://wasin.io)\.  
 Woot\!"#,
                                         Some(SendMessageOption { parse_mode: Some(SendMessageParseMode::MarkdownV2) }));
 
-            let f2 = send_message_async(&instance, 
-r#"\[Rustelebot\] *async msg 2*  
+            let f2 = send_message_async(&instance,
+r#"\[Rustelebot\] __MarkdownV2__  
+*async msg 2*  
 `Tap to copy this text`\.  
 You can visit my [website](https://wasin.io)\.  
 Woot\!"#,
