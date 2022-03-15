@@ -2,7 +2,6 @@
 mod test {
     use crate::*;   // to import lib.rs
     use std::env;
-    use isahc::prelude::*;
 
     /// Reading bot token, and chat id for inteacting with telegram bot.
     /// Return tuple of (bot token, and telegrama's chat id) if successfully read,
@@ -96,14 +95,14 @@ mod test {
         let instance = get_instance();
 
         async fn async_fn(instance: &BotInstance) {
-            let f1 = send_message_async(&instance, "[Rustelebot] msg1");
-            let f2 = send_message_async(&instance, "[Rustelebot] msg2");
-            let f3 = send_message_async(&instance, "[Rustelebot] msg3");
-            let f4 = send_message_async(&instance, "[Rustelebot] msg4");
+            let f1 = send_message_async(&instance, "[Rustelebot] msg1-async");
+            let f2 = send_message_async(&instance, "[Rustelebot] msg2-async");
+            let f3 = send_message_async(&instance, "[Rustelebot] msg3-async");
+            let f4 = send_message_async(&instance, "[Rustelebot] msg4-async");
 
             // wait for all futures
             // this doesn't not guarantee order
-            futures::join!(f1, f2, f3, f4);
+            let _ = futures::join!(f1, f2, f3, f4);
         }
 
         // block on the current thread for the whole async (futures) completes
